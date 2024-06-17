@@ -1,0 +1,1 @@
+export type MoveTypes =  "INCOME"|"EXPENSE"|"TRANSFER"
