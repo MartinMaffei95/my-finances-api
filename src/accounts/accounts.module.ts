@@ -14,5 +14,6 @@ import { Move } from 'src/moves/entities/move.entity';
   ])],
   controllers: [AccountsController],
   providers: [AccountsService],
+  exports:[AccountsService]
 })
 export class AccountsModule {}
