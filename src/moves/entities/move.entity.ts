@@ -19,7 +19,7 @@ export class Move {
     })
     value:number
 
-    @Column("text")
+    @Column("text",{ default:null,nullable: true })
     comment:string
     
     @ManyToOne(() => Account, { nullable: false })
@@ -47,6 +47,9 @@ export class Move {
     })
     labels: Label[]; // Relación con múltiples etiquetas (labels)
 
+    @CreateDateColumn({ name: 'date',type: 'timestamptz' })
+    date: Date;
+
     @CreateDateColumn({ name: 'createdAt',type: 'timestamptz' })
     createdAt: Date;
 
@@ -56,8 +59,20 @@ export class Move {
     @DeleteDateColumn({ name: 'deletedAt',type: 'timestamptz' })
     deletedAt: Date;
 
-    @Column("int2",{
-        default:0
+
+    // CUOTA ACTUAL
+    @Column("float",{
+        default:null
     })
-    pending:0 | 1
+    installment:number
+    // CANTIDAD DE CUOTAS
+    @Column("float",{
+        default:null
+    })
+    totalInstallments:number
+
+    @Column("int2",{
+        default:null
+    })
+    pending:number //0 | 1
 }

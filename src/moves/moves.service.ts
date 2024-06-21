@@ -84,7 +84,7 @@ export class MovesService {
       }
 
          // Añadir la lógica para establecer createdAt
-         const createdAt = createMoveDto.createdAt || new Date();
+         const createdAt = createMoveDto.date || new Date();
 
       // Adjust the balance based on the type of move
       if (type === 'INCOME') {
@@ -124,27 +124,68 @@ export class MovesService {
           },
         );
       }
+      // ## LEGACY
+      // const moveInstance = {
+      //   ...moveData,
+      //   account,
+      //   category,
+      //   destiny_account,
+      //   creditor: null,
+      //   labels,
+      //   type,
+      //   value,
+      //   createdAt
+      // };
+      // const move = this.moveRepository.create(moveInstance);
+      // await queryRunner.manager.save(move);
 
-      const moveInstance = {
-        ...moveData,
-        account,
-        category,
-        destiny_account,
-        creditor: null,
-        labels,
-        type,
-        value,
-        createdAt
-      };
-      const move = this.moveRepository.create(moveInstance);
 
-      await queryRunner.manager.save(move);
+      let newMove
+      // ## CREDIT CARD MOVEMENT
+      if (account.type === 'CREDIT_CARD' && moveData.installments && moveData.installments > 1) {
+        for (let i = 0; i < moveData.installments; i++) {
+          const installmentDate = new Date(createdAt);
+          installmentDate.setMonth(installmentDate.getMonth() + i);
+  
+          const moveInstance = {
+            ...moveData,
+            account,
+            category,
+            destiny_account,
+            creditor: null,
+            labels,
+            type,
+            value,
+            date: installmentDate,
+            pending: 1,
+            installment:i+1, // Actual installment
+            totalInstallments:moveData.installments, // Total quantity of installments
+          };
+  
+          newMove = this.moveRepository.create(moveInstance);
+          await queryRunner.manager.save(newMove);
+        }
+      } else {
+        const moveInstance = {
+          ...moveData,
+          account,
+          category,
+          destiny_account,
+          creditor: null,
+          labels,
+          type,
+          value,
+          date:createdAt
+        };
+        newMove = this.moveRepository.create(moveInstance);
+        await queryRunner.manager.save(newMove);
+      }
 
       //Execute the Query Runner
       await queryRunner.commitTransaction();
       await queryRunner.release();
 
-      return move;
+      return newMove;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();

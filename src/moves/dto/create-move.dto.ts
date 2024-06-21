@@ -48,8 +48,12 @@ export class CreateMoveDto {
     @Type(() => Number)
     labels:Label[]
 
+    // Propiedad para fecha y hora
+    @IsOptional()
+    date: Date; //En la DB paso a llamarse date para no pisar la fecha original de la creacion del registro
 
-      // Propiedad para fecha y hora
-      @IsOptional()
-      createdAt: Date; // Aquí asumo que `createdAt` es de tipo `Date`
+    // Nuevos campos para cuotas
+    @IsOptional()
+    @IsInt()
+    installments?: number;  // Número de cuotas
 }
