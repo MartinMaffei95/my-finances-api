@@ -46,7 +46,7 @@ export class CategoriesService {
 
   async findAll(query:CategoriesFiltersDto) {
     try {
-      const { limit = 100, offset = 1, search = '', order="ASC",order_type="id",name="" } = query;
+      const { limit = 10, offset = 1, search = '', order="ASC",order_type="id",name="" } = query;
 
       const categoryQuery = this.categoryRepository.createQueryBuilder("categories")
       .leftJoinAndSelect("categories.parent", "parent")
