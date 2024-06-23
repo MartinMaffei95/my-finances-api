@@ -1,14 +1,14 @@
 import { PaginatedData, PaginationInfo } from "./interfaces";
 
-type PaginatorConfig<ReturnType> ={data:ReturnType[],count:number,offset:number,limit:number}
+type PaginatorConfig<ReturnType> ={data:ReturnType[],count:number,page:number,limit:number}
 
 
 export class Paginator{
-    paginate<ReturnType>({data,count,offset,limit}:PaginatorConfig<ReturnType>):PaginatedData<ReturnType[]>{
+    paginate<ReturnType>({data,count,page,limit}:PaginatorConfig<ReturnType>):PaginatedData<ReturnType[]>{
         const totalPages = Math.ceil(count / limit);
-         // Calcular la página basada en el offset y el límite
-         //const page = Math.floor(offset / limit) + 1;
-        const page = offset
+         // Calcular la página basada en el page y el límite
+         //const page = Math.floor(page / limit) + 1;
+       
 
         let paginationInfo: PaginationInfo = {
            page: page,

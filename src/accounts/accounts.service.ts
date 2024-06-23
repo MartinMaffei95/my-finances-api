@@ -49,7 +49,7 @@ export class AccountsService {
 
   async findAll(query:AccountsFiltersDto) {
     try {
-      const { limit = 10, offset = 1, search = '', order="ASC",order_type="id",name="" } = query;
+      const { limit = 10, page = 1, search = '', order="ASC",order_type="id",name="" } = query;
 
       // Adding the wheere
       const accountSelect = await this.accountRepository.createQueryBuilder("accounts")
@@ -60,10 +60,10 @@ export class AccountsService {
         accountSelect.andWhere("accounts.name = :name", { name: name }) //Filter
       }
 
-      // Adding order and offset
+      // Adding order and page
       accountSelect.orderBy(`accounts.${order_type}`, order)
       .take(limit)
-      .skip((offset - 1) * limit)
+      .skip((page - 1) * limit)
       
       //Execute the query
       const accountsQuery = await accountSelect.getManyAndCount()
@@ -76,7 +76,7 @@ export class AccountsService {
         accounts.map(async (account) => await this.calculateBalanceAndProgress(account))
       );
       const accountsResponse = this.paginator.paginate(
-        {data:calculatedAccounts,count,limit,offset}
+        {data:calculatedAccounts,count,limit,page}
       )
       return accountsResponse
 
@@ -222,7 +222,7 @@ export class AccountsService {
   
   async findAccountTypes(query:AccountsFiltersDto) {
     try {
-      const { limit = 10, offset = 1, search = '', order="ASC",order_type="id",name="" } = query;
+      const { limit = 10, page = 1, search = '', order="ASC",order_type="id",name="" } = query;
       const accountsTypesResponse = {data:[...accountTypes]}
       return accountsTypesResponse
     } catch (error) {

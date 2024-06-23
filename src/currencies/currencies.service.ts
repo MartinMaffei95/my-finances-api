@@ -25,7 +25,7 @@ export class CurrenciesService {
 
   async findAll(query:CurrenciesFiltersDto) {
     try {
-      const { limit = 10, offset = 1, search = '', order="ASC",order_type="id"} = query;
+      const { limit = 10, page = 1, search = '', order="ASC",order_type="id"} = query;
 
       const curencySelect = await this.currencyRepository.createQueryBuilder("currencies")
       //Execute the query

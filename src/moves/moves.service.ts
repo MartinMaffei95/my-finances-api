@@ -194,7 +194,7 @@ export class MovesService {
   }
 
   async findAll(query: MovesFiltersDto) {
-    const { limit = 10, offset = 1, search = '', order="ASC",order_type="id",account=undefined} = query;
+    const { limit = 10, page = 1, search = '', order="ASC",order_type="id",account=undefined} = query;
     this.logger.log("account"+account,JSON.stringify(query))
     try {
         const movesQuery = this.moveRepository
@@ -209,7 +209,7 @@ export class MovesService {
       movesQuery
         .orderBy(`moves.${order_type}`, order)
         .take(limit)
-        .skip((offset - 1) * limit);
+        .skip((page - 1) * limit);
 
       const movesFinded = await movesQuery.getManyAndCount();
       // DETRUCTURATE
@@ -218,7 +218,7 @@ export class MovesService {
         data: moves,
         count,
         limit,
-        offset,
+        page,
       });
 
       return movesResponse;
@@ -241,19 +241,19 @@ export class MovesService {
   paginate({
     data,
     count,
-    offset,
+    page,
     limit,
   }: {
     data: Move[];
     count: number;
-    offset: number;
+    page: number;
     limit: number;
   }): PaginatedData<Move[]> {
     const totalPages = Math.ceil(count / limit);
-    // Calcular la página basada en el offset y el límite
-    //  const page =  Math.min(Math.max(1, offset), totalPages);
-    // console.log("count,offset,limit,",count,offset,limit)
-    const page = offset;
+    // Calcular la página basada en el page y el límite
+    //  const page =  Math.min(Math.max(1, page), totalPages);
+    // console.log("count,page,limit,",count,page,limit)
+   ;
 
     let paginationInfo: PaginationInfo = {
       page: page,

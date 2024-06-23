@@ -46,7 +46,7 @@ export class CategoriesService {
 
   async findAll(query:CategoriesFiltersDto) {
     try {
-      const { limit = 10, offset = 1, search = '', order="ASC",order_type="id",name="" } = query;
+      const { limit = 10, page = 1, search = '', order="ASC",order_type="id",name="" } = query;
 
       const categoryQuery = this.categoryRepository.createQueryBuilder("categories")
       .leftJoinAndSelect("categories.parent", "parent")
@@ -57,17 +57,17 @@ export class CategoriesService {
       if (name?.length > 0) {
         categoryQuery.andWhere("categories.name = :name", { name });
       }
-      // Adding order and offset
+      // Adding order and page
       categoryQuery.orderBy(`categories.${order_type}`, order)
       .take(limit)
-      .skip((offset - 1) * limit)
+      .skip((page - 1) * limit)
       
       //Execute the query
       const categoriesQuery = await categoryQuery.getManyAndCount()
       // DETRUCTURATE
       const [categories,count]= categoriesQuery
       const categoriesResponse = this.paginator.paginate(
-        {data:categories,count,limit,offset}
+        {data:categories,count,limit,page}
       )
       return categoriesResponse
 
